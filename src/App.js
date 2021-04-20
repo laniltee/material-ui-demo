@@ -1,5 +1,16 @@
 import React, {useEffect, useState} from 'react';
-import {Box, Button, Container, Grid, makeStyles, Paper, TextField, Typography} from '@material-ui/core';
+import {
+  Box,
+  Button,
+  Container, Divider,
+  FormControlLabel,
+  Grid,
+  makeStyles,
+  Paper,
+  Switch,
+  TextField, Tooltip,
+  Typography
+} from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -38,7 +49,8 @@ function App() {
   const classes = useStyles();
 
   const [isWrapped, setIsWrapped] = useState(false);
-  const [wrapText, setWrapText] = useState('');
+  const [wrapText, setWrapText] = useState('')
+  const [useTextInput, setUseTextInput] = useState(false);
 
   const toggleWrapText = () => {
     setWrapText(wrapText === (wrapTextLong || '') ? wrapTextShort : wrapTextLong);
@@ -47,6 +59,10 @@ function App() {
   useEffect(() => {
     setIsWrapped(hasContentWrapped());
   }, [wrapText]);
+
+  useEffect(() => {
+    setWrapText('');
+  }, [useTextInput]);
 
   return (<Container fixed><Box component="span" m={1}><Button variant="contained" color="primary"
                                                                onClick={() => window.alert('Hello World!')}>Hello
@@ -62,11 +78,34 @@ function App() {
       </Grid>
       <Grid item xs={6}>
         <Button variant="contained" color="primary"
+                disabled={useTextInput}
                 onClick={toggleWrapText} id="btnToggleWrapText">Toggle Wrap Text</Button>
-        <Typography variant="h5" color="primary" id="wrapText" className={classes.wrappedText}>
-          {wrapText}
-        </Typography>
+        <Tooltip title={isWrapped ? wrapText : ''}>
+          <Typography variant="h5" color="primary" id="wrapText" className={classes.wrappedText}>
+            {wrapText}
+          </Typography>
+        </Tooltip>
         <p id="summary">Has Overlapped: {isWrapped ? 'Yes' : 'No'}, Length: {wrapText.length}</p>
+        <Divider light/>
+        <TextField
+            id="standard-multiline-flexible"
+            label="Enter Text"
+            multiline
+            rowsMax="10"
+            disabled={!useTextInput}
+            value={useTextInput ? wrapText : null}
+            onChange={(e) => setWrapText(e.target.value)}
+        />
+        <FormControlLabel
+            control={
+              <Switch
+                  checked={useTextInput}
+                  onChange={(e) => setUseTextInput(e.target.checked)}
+                  name="Use Text Input"
+              />
+            }
+            label="Use Text Input"
+        />
       </Grid>
       <Grid item xs={6}>
         <Typography variant="body1" color="primary">
