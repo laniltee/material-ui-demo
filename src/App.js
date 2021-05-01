@@ -9,8 +9,9 @@ import {
   Paper,
   Switch,
   TextField, Tooltip,
-  Typography
+  Typography,
 } from '@material-ui/core';
+import Alert from '@material-ui/lab/Alert';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -51,6 +52,7 @@ function App() {
   const [isWrapped, setIsWrapped] = useState(false);
   const [wrapText, setWrapText] = useState('')
   const [useTextInput, setUseTextInput] = useState(false);
+  const [uploadedFile, setUploadedFile] = useState(null);
 
   const toggleWrapText = () => {
     setWrapText(wrapText === (wrapTextLong || '') ? wrapTextShort : wrapTextLong);
@@ -64,62 +66,88 @@ function App() {
     setWrapText('');
   }, [useTextInput]);
 
+  const onFileChange = (e) => {
+    setUploadedFile(e.target.files[0])
+  }
+
   return (<Container fixed><Box component="span" m={1}><Button variant="contained" color="primary"
                                                                onClick={() => window.alert('Hello World!')}>Hello
-    World</Button></Box>
-    <form className={classes.root} noValidate autoComplete="off">
-      <TextField id="standard-basic" label="Standard"/>
-      <TextField id="filled-basic" label="Filled" variant="filled"/>
-      <TextField id="outlined-basic" label="Outlined" variant="outlined"/>
-    </form>
-    <Grid container spacing={3}>
-      <Grid item xs={12}>
-        <Paper className={classes.paper}>xs=12</Paper>
-      </Grid>
-      <Grid item xs={6}>
-        <Button variant="contained" color="primary"
-                disabled={useTextInput}
-                onClick={toggleWrapText} id="btnToggleWrapText">Toggle Wrap Text</Button>
-        <Tooltip title={isWrapped ? wrapText : ''}>
-          <Typography variant="h5" color="primary" id="wrapText" className={classes.wrappedText}>
-            {wrapText}
-          </Typography>
-        </Tooltip>
-        <p id="summary">Has Overlapped: {isWrapped ? 'Yes' : 'No'}, Length: {wrapText.length}</p>
+        World</Button></Box>
+        <form className={classes.root} noValidate autoComplete="off">
+          <TextField id="standard-basic" label="Standard"/>
+          <TextField id="filled-basic" label="Filled" variant="filled"/>
+          <TextField id="outlined-basic" label="Outlined" variant="outlined"/>
+        </form>
+        <Grid container spacing={3}>
+          <Grid item xs={12}>
+            <Paper className={classes.paper}>xs=12</Paper>
+          </Grid>
+          <Grid item xs={6}>
+            <Button variant="contained" color="primary"
+                    disabled={useTextInput}
+                    onClick={toggleWrapText} id="btnToggleWrapText">Toggle Wrap Text</Button>
+            <Tooltip title={isWrapped ? wrapText : ''}>
+              <Typography variant="h5" color="primary" id="wrapText" className={classes.wrappedText}>
+                {wrapText}
+              </Typography>
+            </Tooltip>
+            <p id="summary">Has Overlapped: {isWrapped ? 'Yes' : 'No'}, Length: {wrapText.length}</p>
+            <Divider light/>
+            <TextField
+                id="standard-multiline-flexible"
+                label="Enter Text"
+                multiline
+                rowsMax="10"
+                disabled={!useTextInput}
+                value={useTextInput ? wrapText : null}
+                onChange={(e) => setWrapText(e.target.value)}
+            />
+            <FormControlLabel
+                control={
+                  <Switch
+                      checked={useTextInput}
+                      onChange={(e) => setUseTextInput(e.target.checked)}
+                      name="Use Text Input"
+                  />
+                }
+                label="Use Text Input"
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <Typography variant="body1" color="primary">
+              There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration
+              in
+              some form, by injected humour, or randomised words which don't look even slightly believable. If you are
+              going
+              to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the
+              middle of
+              text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making
+              this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with
+              a
+              handful of model sentence structures, to generate Lorem Ipsum which looks reasonable. The generated Lorem
+              Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc.
+            </Typography>
+          </Grid>
+        </Grid>
         <Divider light/>
-        <TextField
-            id="standard-multiline-flexible"
-            label="Enter Text"
-            multiline
-            rowsMax="10"
-            disabled={!useTextInput}
-            value={useTextInput ? wrapText : null}
-            onChange={(e) => setWrapText(e.target.value)}
-        />
-        <FormControlLabel
-            control={
-              <Switch
-                  checked={useTextInput}
-                  onChange={(e) => setUseTextInput(e.target.checked)}
-                  name="Use Text Input"
-              />
-            }
-            label="Use Text Input"
-        />
-      </Grid>
-      <Grid item xs={6}>
-        <Typography variant="body1" color="primary">
-          There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in
-          some form, by injected humour, or randomised words which don't look even slightly believable. If you are going
-          to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of
-          text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making
-          this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with a
-          handful of model sentence structures, to generate Lorem Ipsum which looks reasonable. The generated Lorem
-          Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc.
-        </Typography>
-      </Grid>
-    </Grid>
-  </Container>);
+        <Grid item xs={6}> <Typography variant="h4" color="primary">File Upload Size Test</Typography>
+          <Button
+              variant="contained"
+              component="label"
+          >
+            Upload File
+            <input
+                type="file"
+                hidden
+                onChange={onFileChange}
+            />
+          </Button>
+          <p>File Name: {uploadedFile?.name}</p>
+          <p>File Size in kB: {uploadedFile?.size / 1000}</p>
+          {uploadedFile?.size > 1000000 && <Alert severity="error">File size exceeds 1 MB!</Alert>}
+        </Grid>
+      </Container>
+  );
 }
 
 export default App;
