@@ -12,6 +12,7 @@ import {
   Typography,
 } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
+import {DropzoneArea} from 'material-ui-dropzone'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -53,6 +54,7 @@ function App() {
   const [wrapText, setWrapText] = useState('')
   const [useTextInput, setUseTextInput] = useState(false);
   const [uploadedFile, setUploadedFile] = useState(null);
+  const [files, setFiles] = useState([]);
 
   const toggleWrapText = () => {
     setWrapText(wrapText === (wrapTextLong || '') ? wrapTextShort : wrapTextLong);
@@ -68,7 +70,11 @@ function App() {
 
   const onFileChange = (e) => {
     setUploadedFile(e.target.files[0])
-  }
+  };
+
+  const handleChange = (files) => {
+    setFiles(files)
+  };
 
   return (<Container fixed><Box component="span" m={1}><Button variant="contained" color="primary"
                                                                onClick={() => window.alert('Hello World!')}>Hello
@@ -145,6 +151,11 @@ function App() {
           <p>File Name: {uploadedFile?.name}</p>
           <p>File Size in kB: {uploadedFile?.size / 1000}</p>
           {uploadedFile?.size > 1000000 && <Alert severity="error">File size exceeds 1 MB!</Alert>}
+        </Grid>
+        <Grid item xs={6}> <Typography variant="h4" color="primary">Dropzone Size Test</Typography>
+          <DropzoneArea
+              onChange={handleChange}
+          />
         </Grid>
       </Container>
   );
